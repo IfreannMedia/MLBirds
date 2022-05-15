@@ -12,6 +12,8 @@ public class PopulationManager : MonoBehaviour {
 	public static float elapsed = 0;
 	public float trialTime = 5;
 	int generation = 1;
+	public bool considerCrashes = false;
+	public int timeScale = 1;
 
 	GUIStyle guiStyle = new GUIStyle();
 	void OnGUI()
@@ -35,6 +37,7 @@ public class PopulationManager : MonoBehaviour {
 			b.GetComponent<Brain>().Init();
 			population.Add(b);
 		}
+		Time.timeScale = timeScale;
 	}
 
 	GameObject Breed(GameObject parent1, GameObject parent2)
@@ -56,7 +59,7 @@ public class PopulationManager : MonoBehaviour {
 
 	void BreedNewPopulation()
 	{
-		List<GameObject> sortedList = population.OrderBy(o => (o.GetComponent<Brain>().distanceTravelled)).ToList();
+		List<GameObject> sortedList = population.OrderBy(o => (o.GetComponent<Brain>().distanceTravelled - (considerCrashes ? o.GetComponent<Brain>().crash : 0))).ToList();
 		
 		population.Clear();
 		for (int i = (int) (3*sortedList.Count / 4.0f) - 1; i < sortedList.Count - 1; i++)

@@ -7,10 +7,10 @@ public class Brain : MonoBehaviour
 	int DNALength = 5;
 	public DNA dna;
     public GameObject eyes;
-    bool seeDownWall = false; 
-    bool seeUpWall = false; 
-    bool seeBottom = false;
-    bool seeTop = false;  
+   public bool seeDownWall = false; 
+   public bool seeUpWall = false; 
+   public bool seeBottom = false;
+   public bool seeTop = false;  
     Vector3 startPosition;  
     public float timeAlive = 0;
     public float distanceTravelled = 0;  
@@ -33,11 +33,16 @@ public class Brain : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if(col.gameObject.tag == "dead" || 
-        	col.gameObject.tag == "top" ||
-        	col.gameObject.tag == "bottom" ||
-        	col.gameObject.tag == "upwall" ||
-        	col.gameObject.tag == "downwall")
+
+    }
+
+    void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.gameObject.tag == "dead" ||
+            col.gameObject.tag == "top" ||
+            col.gameObject.tag == "bottom" ||
+            col.gameObject.tag == "upwall" ||
+            col.gameObject.tag == "downwall")
         {
             crash++;
         }
@@ -46,18 +51,18 @@ public class Brain : MonoBehaviour
 
     void Update()
     {
-        if(!alive) return;
+        Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 1.0f, seeUpWall || seeDownWall ? Color.red : Color.green);
+        Debug.DrawRay(eyes.transform.position, eyes.transform.up * 1.0f, seeTop ? Color.red : Color.green);
+        Debug.DrawRay(eyes.transform.position, -eyes.transform.up * 1.0f, seeBottom ? Color.red : Color.green);
+
+        if (!alive) return;
 
         seeUpWall = false;
         seeDownWall = false;
         seeTop = false;
         seeBottom = false;
-        RaycastHit2D hit = Physics2D.Raycast(eyes.transform.position, eyes.transform.forward, 1.0f);
-
-        Debug.DrawRay(eyes.transform.position, eyes.transform.forward * 1.0f, Color.red);
-        Debug.DrawRay(eyes.transform.position, eyes.transform.up* 1.0f, Color.red);
-        Debug.DrawRay(eyes.transform.position, -eyes.transform.up* 1.0f, Color.red);
-
+        LayerMask mask = LayerMask.GetMask("Default");
+        RaycastHit2D hit = Physics2D.Raycast(eyes.transform.position, eyes.transform.forward, 1.0f, mask);
         if (hit.collider != null)
         {
             if(hit.collider.gameObject.tag == "upwall")
@@ -69,7 +74,7 @@ public class Brain : MonoBehaviour
                 seeDownWall = true;
             }
         }
-		hit = Physics2D.Raycast(eyes.transform.position, eyes.transform.up, 1.0f);
+		hit = Physics2D.Raycast(eyes.transform.position, eyes.transform.up, 1.0f, mask);
 		if (hit.collider != null)
         {
             if(hit.collider.gameObject.tag == "top")
@@ -77,7 +82,7 @@ public class Brain : MonoBehaviour
                 seeTop = true;
             }
         }
-        hit = Physics2D.Raycast(eyes.transform.position, -eyes.transform.up, 1.0f);
+        hit = Physics2D.Raycast(eyes.transform.position, -eyes.transform.up, 1.0f, mask);
 		if (hit.collider != null)
         {    
             if(hit.collider.gameObject.tag == "bottom")
@@ -85,6 +90,7 @@ public class Brain : MonoBehaviour
                 seeBottom = true;
             }
         }
+
         timeAlive = PopulationManager.elapsed;
     }
 

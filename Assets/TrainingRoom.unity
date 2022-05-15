@@ -1412,7 +1412,9 @@ MonoBehaviour:
   botPrefab: {fileID: 1629249223627068, guid: 31f42f6d158034393bfe2aec60f7df92, type: 3}
   startingPos: {fileID: 1450475675}
   populationSize: 200
-  trialTime: 10
+  trialTime: 15
+  considerCrashes: 1
+  timeScale: 8
 --- !u!4 &2051548412
 Transform:
   m_ObjectHideFlags: 0
